@@ -17,15 +17,6 @@ export default function GeoGameAPIPage() {
             <Globe className="h-12 w-12 text-blue-600" />
             <h1 className="text-4xl font-bold text-gray-900">GeoGame</h1>
           </div>
-          <div className="mt-4">
-            <Link
-              href="/leaderboard"
-              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-            >
-              <Trophy className="mr-2 h-4 w-4" />
-              Skor Tablosunu Görüntüle
-            </Link>
-          </div>
         </div>
 
         {/* Database Statistics */}
