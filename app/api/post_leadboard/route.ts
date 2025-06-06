@@ -177,9 +177,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Discord'a leaderboard gönder (opsiyonel - sadece embed mesaj olarak)
-    if (process.env.BOT_TOKEN && process.env.PUAN_LOG) {
+    if (process.env.BOT_TOKEN) {
       try {
-        const result = await sendLeaderboardToDiscord(process.env.PUAN_LOG, updatedDatabase)
+        const result = await sendLeaderboardToDiscord("1380670048519327804", updatedDatabase)
         discordResults.leaderboard = result
       } catch (error) {
         console.error("Leaderboard gönderilemedi:", error)
