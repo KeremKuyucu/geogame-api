@@ -15,7 +15,7 @@ export default function GeoGameAPIPage() {
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-3 mb-4">
             <Globe className="h-12 w-12 text-blue-600" />
-            <h1 className="text-4xl font-bold text-gray-900">GeoGame API</h1>
+            <h1 className="text-4xl font-bold text-gray-900">GeoGame</h1>
           </div>
           <div className="mt-4">
             <Link
