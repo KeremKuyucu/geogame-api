@@ -124,7 +124,6 @@ export default function LeaderboardTable() {
       </CardHeader>
       <CardContent>
         <Table>
-          <TableCaption>Discord'dan gerçek zamanlı skor tablosu</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead className="w-12">Sıra</TableHead>
