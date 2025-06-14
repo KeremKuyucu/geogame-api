@@ -19,6 +19,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="tr">
+        <head>
+        <link
+          rel="icon"
+          type="image/x-icon"
+          href="https://raw.github.com/KeremKuyucu/GeoGame/main/assets/logo.png"
+        />
+        <meta name="theme-color" content="#4338ca" />
+      </head>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           {children}
