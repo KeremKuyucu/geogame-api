@@ -36,57 +36,6 @@ const sendMessageToDiscord = async (message: string, channelId: string, embed: a
   }
 }
 
-// Leaderboard'u Discord'a gönderen fonksiyon
-const sendLeaderboardToDiscord = async (channelId: string, database: any) => {
-  if (!process.env.BOT_TOKEN) {
-    console.warn("BOT_TOKEN çevre değişkeni tanımlanmamış")
-    return false
-  }
-
-  try {
-    // En yüksek puanlı 10 kullanıcıyı al
-    const topUsers = [...database.users].sort((a, b) => (Number(b.puan) || 0) - (Number(a.puan) || 0)).slice(0, 10)
-
-    // Leaderboard embed mesajı
-    const leaderboardEmbed = {
-      title: "🏆 GeoGame Skor Tablosu",
-      color: 0xf1c40f, // Altın rengi
-      description: "En yüksek puanlı oyuncular",
-      fields: topUsers.map((user, index) => ({
-        name: `${index + 1}. ${user.name}`,
-        value: `**Puan:** ${user.puan}\n**Mesafe:** ${user.mesafepuan || 0} | **Bayrak:** ${user.bayrakpuan || 0} | **Başkent:** ${user.baskentpuan || 0}`,
-        inline: false,
-      })),
-      footer: {
-        text: "GeoGame Puan Tablosu",
-        icon_url: "https://cdn.glitch.global/e74d89f5-045d-4ad2-94c7-e2c99ed95318/logo.png?v=1740170623412",
-      },
-      timestamp: new Date(),
-    }
-
-    // Discord'a gönder
-    await axios.post(
-      `https://discord.com/api/v10/channels/${channelId}/messages`,
-      {
-        content: "📊 Güncel Skor Tablosu",
-        embeds: [leaderboardEmbed],
-      },
-      {
-        headers: {
-          Authorization: `Bot ${process.env.BOT_TOKEN}`,
-          "Content-Type": "application/json",
-        },
-      },
-    )
-
-    console.log("Leaderboard başarıyla gönderildi!")
-    return true
-  } catch (error: any) {
-    console.error("Leaderboard gönderilemedi:", error.response?.data || error.message)
-    return false
-  }
-}
-
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
@@ -176,16 +125,23 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Discord'a leaderboard gönder (opsiyonel - sadece embed mesaj olarak)
-    if (process.env.BOT_TOKEN) {
-      try {
-        const result = await sendLeaderboardToDiscord("1380670048519327804", updatedDatabase)
-        discordResults.leaderboard = result
-      } catch (error) {
-        console.error("Leaderboard gönderilemedi:", error)
-      }
-    }
+    try {
+      const analyticsResponse = await axios.post('http://analytics.keremkk.com.tr/api/analytics', {
+        appId: 'geogame', // Veya obj içinden uygun değer
+        userId: obj.uid || 'unknown',
+        endpoint: '/game/score', // İstersen endpoint özelleştirilebilir
+      })
 
+      if (analyticsResponse.status === 200 || analyticsResponse.status === 201) {
+        console.log('Analytics servisine veri gönderildi.')
+        discordResults.analyticsPost = true
+      } else {
+        console.warn('Analytics servisine gönderim başarısız:', analyticsResponse.status)
+      }
+    } catch (error) {
+      console.error('Analytics servisine gönderim hatası:', error)
+    }
+    
     return NextResponse.json({
       success: true,
       message: "İşlem tamamlandı",
