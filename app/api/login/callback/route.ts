@@ -1,6 +1,22 @@
 import { type NextRequest, NextResponse } from "next/server"
 import axios from "axios"
 
+const allowedOrigin = "https://geogame-auth.keremkk.com.tr";
+
+// Yanıtlarda kullanılacak ortak CORS başlıkları
+const corsHeaders = {
+  'Access-Control-Allow-Origin': allowedOrigin,
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+};
+
+export async function OPTIONS(request: NextRequest) {
+  return new NextResponse(null, {
+    status: 204, // No Content
+    headers: corsHeaders,
+  });
+}
+
 // Discord mesaj gönderme fonksiyonu
 const sendMessageToDiscord = async (message: string, channelId: string, embed: any = null) => {
   if (!process.env.BOT_TOKEN) {
@@ -66,13 +82,25 @@ export async function POST(request: NextRequest) {
     }
 
     // Başarılı yanıt gönder
-    return NextResponse.json({
-      uid: userData.uid,
-      displayName: userData.displayName,
-      profilePicture: userData.profilePicture,
-    })
+    return new NextResponse(
+      JSON.stringify({
+        uid: userData.uid,
+        displayName: userData.displayName,
+        profilePicture: userData.profilePicture,
+      }),
+      {
+        status: 200,
+        headers: corsHeaders, 
+      }
+    )
   } catch (error: any) {
     console.error("API hatası:", error)
-    return NextResponse.json({ error: error.message || "Bir hata oluştu" }, { status: 500 })
+    return new NextResponse(
+      JSON.stringify({ error: error.message || "Bir hata oluştu" }),
+      {
+        status: 500,
+        headers: corsHeaders, // 🔥 Hata yanıtına da CORS başlıkları eklenmeli
+      }
+    )
   }
 }
